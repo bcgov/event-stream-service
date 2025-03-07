@@ -1,0 +1,73 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+  "name": "ESS Webapp",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [
+    5173, // Frontend
+    8080 // Backend
+  ],
+  "portsAttributes": {
+    "5173": {
+      "label": "Frontend"
+    },
+    "8080": {
+      "label": "Backend"
+    }
+  },
+  // Uncomment the next line to run commands after the container is created.
+  "postCreateCommand": "bash ./.devcontainer/post-install.sh",
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bierner.markdown-preview-github-styles",
+        "davidanson.vscode-markdownlint",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "ryanluker.vscode-coverage-gutters",
+        "vue.volar"
+      ],
+      "settings": {
+        "[html]": {
+          "editor.defaultFormatter": "vscode.html-language-features"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[json]": {
+          "editor.defaultFormatter": "vscode.json-language-features"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "vscode.json-language-features"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[vue]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "coverage-gutters.showGutterCoverage": false,
+        "coverage-gutters.showLineCoverage": true,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.formatOnSave": true,
+        "eslint.format.enable": true,
+        "files.insertFinalNewline": true
+      }
+    }
+  },
+  // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "devcontainer"
+}

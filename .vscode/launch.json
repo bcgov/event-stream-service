@@ -1,0 +1,36 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "app: serve",
+      "request": "launch",
+      "command": "npm run serve",
+      "cwd": "${workspaceFolder}/app"
+    },
+    {
+      "type": "node-terminal",
+      "name": "frontend: dev",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend",
+      "env": {
+        "VITE_TITLE": "Event Stream Service Manager (Local)"
+      },
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "frontend: chrome",
+      "url": "http://localhost:5173/",
+      "enableContentValidation": false,
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*"
+      }
+    }
+  ]
+}
