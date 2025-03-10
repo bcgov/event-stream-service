@@ -1,4 +1,31 @@
 {
   "version": "2.0.0",
-  "tasks": []
+  "tasks": [
+    {
+      "args": [
+        "run",
+        "test"
+      ],
+      "command": "npm",
+      "group": "test",
+      "label": "unit tests: app",
+      "options": {
+        "cwd": "${workspaceFolder}/app"
+      },
+      "type": "shell"
+    },
+    {
+      "args": [
+        "run",
+        "test"
+      ],
+      "command": "npm",
+      "group": "test",
+      "label": "unit tests: frontend",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "type": "shell"
+    },
+  ]
 }

@@ -31,6 +31,45 @@
       "sourceMapPathOverrides": {
         "webpack:///./*": "${webRoot}/*"
       }
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "current file: jest",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "program": "${workspaceFolder}/app/node_modules/.bin/jest",
+      "args": [
+        "${file}",
+        "--config",
+        "${workspaceFolder}/app/jest.config.js",
+        "--coverage=false"
+      ],
+      "console": "integratedTerminal",
+      "windows": {
+        "program": "${workspaceFolder}/app/node_modules/jest/bin/jest"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "current file: vitest",
+      "autoAttachChildProcesses": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/**"
+      ],
+      "program": "${workspaceFolder}/frontend/node_modules/vitest/vitest.mjs",
+      "args": [
+        "run",
+        "${relativeFile}",
+        "-r",
+        "${workspaceFolder}/frontend",
+        "--coverage=false"
+      ],
+      "smartStep": true,
+      "console": "integratedTerminal"
+    },
   ]
 }

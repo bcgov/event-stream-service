@@ -1,12 +1,30 @@
 import { appAxios } from './interceptors';
+import type { GeneratedCredentials } from '@/types';
 
-export default {
+export default class GenerateCredentialsService {
+  private static _instance: GenerateCredentialsService;
+
   /**
-   * @function helloWorld
-   * Returns the secured view page header
-   * @returns {Promise} An axios response
+   * @constructor
    */
-  generateCredentials() {
-    return appAxios().get('generateCredentials');
+  constructor() {
+    if (!GenerateCredentialsService._instance) {
+      GenerateCredentialsService._instance = this;
+    }
+
+    return GenerateCredentialsService._instance;
   }
-};
+
+  public async generateCredentials(): Promise<GeneratedCredentials | null> {
+    return new Promise<GeneratedCredentials | null>((resolve, reject) => {
+      appAxios()
+        .get('generateCredentials')
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((err) => {
+          reject(new Error(`Error generating credentials: ${err}`));
+        });
+    });
+  }
+}
