@@ -38,12 +38,14 @@ COPY frontend ${APP_ROOT}
 RUN chown -R 1001:0 ${APP_ROOT}
 USER 1001
 WORKDIR ${APP_ROOT}
+# if we didn't add an env file in external build process, add a default one.
+RUN if [ ! -f ${APP_ROOT}/.env ] ;  then echo "VITE_TITLE=Event Stream Service Manager" >  ${APP_ROOT}/.env ; fi
 RUN npm ci && npm run build
 
 #
 # Create the nk tool container image
 #
-FROM ${GO_IMAGE} as nk_tool
+FROM ${GO_IMAGE} AS nk_tool
 
 # need to install nats nk tool
 RUN apk update && apk upgrade -a \
@@ -71,6 +73,7 @@ COPY .git ${APP_ROOT}/.git
 COPY app/config ${APP_ROOT}/config
 COPY app/config ${APP_ROOT}/sbin/config
 COPY app/package.json app/package-lock.json ${APP_ROOT}
+
 WORKDIR ${APP_ROOT}
 
 # Install Application
