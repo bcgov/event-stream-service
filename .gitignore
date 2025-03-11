@@ -131,3 +131,5 @@ dist
 
 # not sure what is creating this file...
 app/core
+
+.devcontainer/localhost/local.json

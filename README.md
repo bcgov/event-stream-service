@@ -1,14 +1,42 @@
-# event-stream-service
+# Event Stream Service
 
-lots to do...
+TODO: fill this in when we make it a BCGov repo.
 
-for developers: run in the devcontainer.
+## Directory Structure
 
-launch "app: serve"
-launch "frontend: dev"
+    .devcontainer                  - Visual Studio Code devcontainer and local environment config
+    .github/                       - PR and Issue templates
+    .vscode/                       - Visual Studio Code's Launcher and Tasks
+    app/                           - Application server/backend code
+    ├── src/                       - Node.js Express application
+    └── tests/                     - server/backend tests (jest)
+    charts/                        - Vue.js frontend code
+    ├── event-stream-service/      - Helm charts for Event Stream Service (nats.io)
+    ├── event-stream-service-app/  - Helm charts for Event Stream Service application
+    frontend/                      - Vue.js frontend code
+    ├── src/                       - frontend source (vue)
+    └── tests/                     - frontend tests (vitest)
+    service/                       - ESS (javascript nats.io) client code examples
+    CODE-OF-CONDUCT.md             - Code of Conduct
+    COMPLIANCE.yaml                - BCGov PIA/STRA compliance status
+    CONTRIBUTING.md                - Contributing Guidelines
+    LICENSE                        - License
+    SECURITY.md                    - Security Policy and Reporting
 
-and that will bring up the server (app) on 8080 and the frontend on 5173.
+## Documentation
 
-you can then launch "frontend: chrome" if you want to debug the frontend code (it sometimes takes a second launch to get it working.).
+- [Application Readme](app/README.md)
+- [Frontend Readme](frontend/README.md)
+- [Security Reporting](SECURITY.md)
 
-default configuration is to use Standard Realm SSO dev values.
+## Help, Problems, and Feature Requests
+
+TODO: fill in with standard BCGov information.
+
+## How to Contribute
+
+TODO: fill in with standard BCGov information.
+
+## License
+
+TODO: fill in with standard BCGov information.

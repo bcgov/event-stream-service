@@ -10,7 +10,10 @@
       "group": "test",
       "label": "unit tests: app",
       "options": {
-        "cwd": "${workspaceFolder}/app"
+        "cwd": "${workspaceFolder}/app",
+        "env": {
+          "NODE_CONFIG_DIR": "${workspaceFolder}/.devcontainer/localhost"
+        }
       },
       "type": "shell"
     },
@@ -23,7 +26,10 @@
       "group": "test",
       "label": "unit tests: frontend",
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/frontend",
+        "env": {
+          "NODE_CONFIG_DIR": "${workspaceFolder}/.devcontainer/localhost"
+        }
       },
       "type": "shell"
     },

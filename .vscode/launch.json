@@ -9,7 +9,10 @@
       "name": "app: serve",
       "request": "launch",
       "command": "npm run serve",
-      "cwd": "${workspaceFolder}/app"
+      "cwd": "${workspaceFolder}/app",
+      "env": {
+        "NODE_CONFIG_DIR": "${workspaceFolder}/.devcontainer/localhost"
+      }
     },
     {
       "type": "node-terminal",
