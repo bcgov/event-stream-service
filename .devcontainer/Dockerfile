@@ -1,4 +1,4 @@
-ARG VARIANT="20.18.2-bookworm"
+ARG VARIANT="20.18.3-bookworm"
 
 #
 # need the nats tk tool

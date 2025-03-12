@@ -1,5 +1,5 @@
 ARG APP_ROOT=/opt/app-root/src
-ARG BASE_IMAGE=docker.io/node:20.18.2-alpine
+ARG BASE_IMAGE=docker.io/node:20.18.3-alpine3.21
 ARG GO_IMAGE=golang:alpine
 
 #
