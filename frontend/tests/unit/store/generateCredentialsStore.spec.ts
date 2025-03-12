@@ -4,7 +4,7 @@ import { GenerateCredentialsService } from '@/services';
 import { useGenerateCredentialsStore } from '@/store';
 import type { StoreGeneric } from 'pinia';
 
-import type { SpyInstance } from 'vitest';
+import type { MockInstance } from 'vitest';
 
 beforeEach(() => {
   setActivePinia(createPinia());
@@ -18,7 +18,7 @@ describe('Config Store', () => {
   let service: GenerateCredentialsService;
   let store: StoreGeneric;
 
-  let serviceGenerateCredentialsSpy: SpyInstance;
+  let serviceGenerateCredentialsSpy: MockInstance;
 
   beforeEach(() => {
     service = new GenerateCredentialsService();
