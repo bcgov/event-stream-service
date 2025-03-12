@@ -2,7 +2,7 @@
 # this is strictly for Proof of concept and to smoke test the charts/app.
 image:
   repository: docker.io/usingtechnology
-  tag: 0.02
+  tag: 0.03
 
 route:
   host: ess-app-dev.apps.silver.devops.gov.bc.ca
