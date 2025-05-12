@@ -14,14 +14,14 @@ npm install
 cd $WORKSPACE_DIR/frontend
 npm install && npm run build
 
-# service examples
-cd $WORKSPACE_DIR/service
+# tools examples
+cd $WORKSPACE_DIR/tools
 npm install
 
 # copy over the sample files to the image...
 cp -u ${LOCALHOST_DIR}/local.sample.json ${LOCALHOST_DIR}/local.json
 
-# if and when a db is added to our localhost docker-compose environmen
+# if and when a db is added to our localhost docker-compose environment
 # fire up postgres... we want to seed the db
 # docker compose -f ${LOCALHOST_DIR}/docker-compose.yml up --wait
 

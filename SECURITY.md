@@ -10,7 +10,7 @@ project.
 
 ## Supported Versions
 
-At this time, only the latest version of Vue 3 Scaffold is supported.
+At this time, only the latest version of Event Stream Service is supported.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -19,18 +19,7 @@ At this time, only the latest version of Vue 3 Scaffold is supported.
 
 ## Reporting a Bug
 
-The `CSS` team and community take all security bugs in `Vue 3 Scaffold` seriously.
-Thank you for improving the security of `Vue 3 Scaffold`. We appreciate your efforts and
-responsible disclosure and will make every effort to acknowledge your
-contributions.
-
-Report security bugs by sending an email to <NR.CommonServiceShowcase@gov.bc.ca>.
-
-The `CSS` team will acknowledge your email within 48 hours, and will send a
-more detailed response within 48 hours indicating the next steps in handling
-your report. After the initial reply to your report, the security team will
-endeavor to keep you informed of the progress towards a fix and full
-announcement, and may ask for additional information or guidance.
+Please report any issues/bugs by creating a [GitHub Issue](https://github.com/bcgov/event-stream-service/issues). 
 
 Report security bugs in third-party modules to the person or team maintaining
 the module.
