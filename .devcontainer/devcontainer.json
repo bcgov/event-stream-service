@@ -38,7 +38,8 @@
         "ms-azuretools.vscode-docker",
         "redhat.vscode-yaml",
         "ryanluker.vscode-coverage-gutters",
-        "vue.volar"
+        "vue.volar",
+        "ms-azuretools.vscode-containers"
       ],
       "settings": {
         "[html]": {
