@@ -1,0 +1,26 @@
+name: App Build Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - app/**
+      - frontend/**
+      - .github/workflows/docker-build.yml
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/image_build_and_push.yml
+    with:
+      gh_username: ${{ github.repository_owner }}
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+      image_name: event-stream-service-app
+      git_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+      context: .
+      dockerfile: ./Dockerfile
+      pr_number: ${{ github.event.pull_request.number || '' }}
