@@ -19,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Use the correct ref for push or pull request
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+
       - name: Use Image Build and Push Composite Action
         uses: ./.github/actions/image_build_and_push
         with:
