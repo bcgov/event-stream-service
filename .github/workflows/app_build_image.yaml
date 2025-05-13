@@ -1,0 +1,37 @@
+name: App Build Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - app/**
+      - frontend/**
+      - .github/workflows/app_build_image.yaml
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code to get actions
+        uses: actions/checkout@v4
+        with:
+          # Use the correct ref for push or pull request
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+
+      - name: Call Image Build and Push Composite Action
+        uses: ./.github/actions/image_build_and_push
+        with:
+          gh_username: ${{ github.repository_owner }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          image_name: event-stream-service-app
+          git_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          pr_number: ${{ github.event.pull_request.number || '' }}
+          context: .
+          dockerfile: ./Dockerfile
