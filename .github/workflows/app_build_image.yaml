@@ -8,14 +8,14 @@ on:
       - Dockerfile
       - app/**
       - frontend/**
-      - .github/workflows/docker-build.yml
+      - .github/workflows/app_build_image.yml
   pull_request:
     branches:
       - main
 
 jobs:
   build-and-push:
-    uses: ./.github/workflows/image_build_and_push.yml
+    uses: ./.github/actions/image_build_and_push
     with:
       gh_username: ${{ github.repository_owner }}
       gh_token: ${{ secrets.GITHUB_TOKEN }}
