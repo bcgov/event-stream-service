@@ -1,34 +1,28 @@
 name: Image Build and Push
+description: This action builds and pushes a Docker image to the GitHub Container Registry.
 
 inputs:
   gh_username:
     description: GitHub username (lowercase)
     required: true
-    type: string
   gh_token:
     description: GitHub token for authentication
     required: true
-    type: string
   image_name:
     description: Name of the Docker image to build and push
     required: true
-    type: string
   git_ref:
     description: Git ref to check out
     required: true
-    type: string
   pr_number:
     description: Pull request number (if applicable)
     required: false
-    type: string
   context:
     description: Build context for the Dockerfile
     required: true
-    type: string
   dockerfile:
     description: Path to the Dockerfile
     required: true
-    type: string
 
 runs:
   using: composite
@@ -55,7 +49,7 @@ runs:
     - name: Parse Input Values
       shell: bash
       run: |
-        echo "GH_USERNAME=$(tr '[:upper:]' '[:lower:]' <<< '${{ inputs.github_username }}')" >> $GITHUB_ENV
+        echo "GH_USERNAME=$(tr '[:upper:]' '[:lower:]' <<< '${{ inputs.gh_username }}')" >> $GITHUB_ENV
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v3
@@ -69,7 +63,7 @@ runs:
       uses: docker/metadata-action@v5
       with:
         images: |
-          ghcr.io/${{ inputs.gh_username }}/${{ inputs.image_name }}
+          ghcr.io/${{ env.GH_USERNAME }}/${{ inputs.image_name }}
         flavor: |
           latest=true
         tags: |
