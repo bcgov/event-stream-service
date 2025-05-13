@@ -8,7 +8,7 @@ on:
       - Dockerfile
       - app/**
       - frontend/**
-      - .github/workflows/docker-build.yml
+      - .github/workflows/app_build_image.yaml
   pull_request:
     branches:
       - main
