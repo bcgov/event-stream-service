@@ -8,19 +8,24 @@ on:
       - Dockerfile
       - app/**
       - frontend/**
-      - .github/workflows/app_build_image.yml
+      - .github/workflows/docker-build.yml
   pull_request:
     branches:
       - main
 
 jobs:
   build-and-push:
-    uses: ./.github/actions/image_build_and_push
-    with:
-      gh_username: ${{ github.repository_owner }}
-      gh_token: ${{ secrets.GITHUB_TOKEN }}
-      image_name: event-stream-service-app
-      git_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
-      context: .
-      dockerfile: ./Dockerfile
-      pr_number: ${{ github.event.pull_request.number || '' }}
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Use Image Build and Push Composite Action
+        uses: ./.github/actions/image_build_and_push
+        with:
+          gh_username: ${{ github.repository_owner }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          image_name: event-stream-service-app
+          git_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          pr_number: ${{ github.event.pull_request.number || '' }}
+          context: .
+          dockerfile: ./Dockerfile
