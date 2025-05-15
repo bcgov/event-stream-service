@@ -39,8 +39,8 @@ runs:
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
-        server: ${{ inputs.server }}
-        token: ${{ inputs.token }}
+        openshift_server_url: ${{ inputs.server }}
+        openshift_token: ${{ inputs.token }}
         insecure_skip_tls_verify: true
         namespace: ${{ inputs.namespace }}
 
