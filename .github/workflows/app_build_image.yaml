@@ -9,15 +9,16 @@ on:
       - app/**
       - frontend/**
       - .github/workflows/app_build_image.yaml
+      - .github/workflows/app_deploy_image.yaml
   pull_request:
     branches:
       - main
-
-permissions:
-  contents: write
-  packages: write
-  actions: read
-  
+    paths:
+      - Dockerfile
+      - app/**
+      - frontend/**
+      - .github/workflows/app_build_image.yaml
+      - .github/workflows/app_deploy_image.yaml
 jobs:
   build-and-push:
     name: Build and Push Docker Image
