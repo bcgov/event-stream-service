@@ -37,7 +37,7 @@ runs:
         ref: ${{ inputs.git_ref }}
 
     - name: Log in to OpenShift
-      uses: redhat-actions/oc-login@v2
+      uses: redhat-actions/oc-login@v1
       with:
         server: ${{ inputs.server }}
         token: ${{ inputs.token }}
