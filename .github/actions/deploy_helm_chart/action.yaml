@@ -1,0 +1,60 @@
+name: Deploy Helm Chart
+description: Deploy a Helm chart to a Kubernetes cluster.
+
+inputs:
+  chart_path:
+    description: Path to the Helm chart directory.
+    required: true
+  values_file:
+    description: Path to the values file to use (optional).
+    required: false
+  overrides:
+    description: Additional Helm values to override (YAML format).
+    required: false
+  release_name:
+    description: Name of the Helm release.
+    required: true
+  server:
+    description: OpenShift server for deployment.
+    required: true
+  token:
+    description: Openshift service account token.
+    required: true
+  namespace:
+    description: Openshift namespace to deploy to.
+    required: true
+  git_ref:
+    description: Git reference (branch or commit SHA) to check out.
+    required: false
+    default: main
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.git_ref }}
+
+    - name: Log in to OpenShift
+      uses: redhat-actions/oc-login@v2
+      with:
+        server: ${{ inputs.server }}
+        token: ${{ inputs.token }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ inputs.namespace }}
+
+    - name: Deploy Helm Chart
+      run: |
+        if [ -n "${{ inputs.values_file }}" ]; then
+          helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            -n ${{ inputs.namespace }} \
+            -f ${{ inputs.chart_path }}/values.yaml \
+            -f ${{ inputs.values_file }} \
+            --set ${{ inputs.overrides }}
+        else
+          helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+            -n ${{ inputs.namespace }} \
+            -f ${{ inputs.chart_path }}/values.yaml \
+            --set ${{ inputs.overrides }}
+        fi
