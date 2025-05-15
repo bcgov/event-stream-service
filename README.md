@@ -1,6 +1,6 @@
 # Event Stream Service
 
-TODO: fill this in when we make it a BCGov repo.
+Event Stream Service (ESS) is a [nats.io](https://nats.io) based message and event notification bus.
 
 ## Directory Structure
 
