@@ -75,7 +75,7 @@ jobs:
           overrides: |
             image.tag=${{ env.IMAGE_VERSION }}${{ env.ROUTE_OVERRIDE && format(',{0}', env.ROUTE_OVERRIDE) || '' }}
           release_name: ${{ env.RELEASE_NAME }}
-          server: ${{ secrets.OPENSHIFT_SERVER }}
+          server: ${{ vars.OPENSHIFT_SERVER }}
           token: ${{ secrets.OPENSHIFT_TOKEN }}
           namespace: ${{ vars.NAMESPACE }}
           git_ref: ${{ env.GIT_REF }}
