@@ -35,6 +35,11 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
 jobs:
   deploy:
     name: Deploy Event Stream Service App
