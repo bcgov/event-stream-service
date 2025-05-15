@@ -22,19 +22,34 @@ on:
         default: main
 
 jobs:
+  set-refs:
+    runs-on: ubuntu-latest
+    outputs:
+      git_ref: ${{ steps.set.outputs.git_ref }}
+      pr_number: ${{ steps.set.outputs.pr_number }}
+    steps:
+      - id: set
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            GIT_REF="${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.event.inputs.git_ref }}"
+          else
+            PR_NUMBER=""
+            GIT_REF="${{ github.ref_name }}"
+          fi
+          echo "git_ref=$GIT_REF" >> $GITHUB_OUTPUT
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
-
-    env:
-      GIT_REF: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.event.inputs.git_ref) || github.ref_name }}
-      PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number || github.event.pull_request.number || '' }}
+    needs: set-refs
 
     steps:
       - name: Checkout code to get actions
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.GIT_REF }}
+          ref: ${{ needs.set-refs.outputs.git_ref }}
 
       - name: Call Image Build and Push Composite Action
         uses: ./.github/actions/image_build_and_push
@@ -42,17 +57,17 @@ jobs:
           gh_username: ${{ github.repository_owner }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           image_name: event-stream-service-app
-          git_ref: ${{ env.GIT_REF }}
-          pr_number: ${{ env.PR_NUMBER }}
+          git_ref: ${{ needs.set-refs.outputs.git_ref }}
+          pr_number: ${{ needs.set-refs.outputs.pr_number }}
           context: .
           dockerfile: ./Dockerfile
 
   deploy:
     name: Deploy After Build (PR Only)
-    needs: build-and-push
-    if: ${{ env.PR_NUMBER != '' }}
+    needs: [set-refs, build-and-push]
+    if: ${{ needs.set-refs.outputs.pr_number != '' }}
     uses: ./.github/workflows/app_deploy_image.yaml
     with:
       environment: dev
-      git_ref: ${{ env.GIT_REF }}
-      pr_number: ${{ env.PR_NUMBER }}
+      git_ref: ${{ needs.set-refs.outputs.git_ref }}
+      pr_number: ${{ needs.set-refs.outputs.pr_number }}
