@@ -77,3 +77,4 @@ jobs:
           server: ${{ secrets.OPENSHIFT_SERVER }}
           token: ${{ secrets.OPENSHIFT_TOKEN }}
           namespace: ${{ vars.NAMESPACE }}
+          git_ref: ${{ env.GIT_REF }}
