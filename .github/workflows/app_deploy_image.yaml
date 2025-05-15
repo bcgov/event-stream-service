@@ -40,11 +40,14 @@ jobs:
     name: Deploy Event Stream Service App
     runs-on: ubuntu-latest
 
+    env:
+      GIT_REF: ${{ inputs.pr_number && format('refs/pull/{0}/head', inputs.pr_number) || inputs.git_ref }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.git_ref }}
+          ref: ${{ env.GIT_REF }}
 
       - name: Set IMAGE_VERSION
         shell: bash

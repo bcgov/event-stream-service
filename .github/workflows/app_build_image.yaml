@@ -18,12 +18,14 @@ jobs:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
+    env:
+      GIT_REF: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref_name }}
+
     steps:
       - name: Checkout code to get actions
         uses: actions/checkout@v4
         with:
-          # Use the correct ref for push or pull request
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          ref: ${{ env.GIT_REF }}
 
       - name: Call Image Build and Push Composite Action
         uses: ./.github/actions/image_build_and_push
@@ -31,7 +33,7 @@ jobs:
           gh_username: ${{ github.repository_owner }}
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           image_name: event-stream-service-app
-          git_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          git_ref: ${{ env.GIT_REF }}
           pr_number: ${{ github.event.pull_request.number || '' }}
           context: .
           dockerfile: ./Dockerfile

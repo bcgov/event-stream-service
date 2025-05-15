@@ -27,10 +27,6 @@ inputs:
     description: Git reference (branch or commit SHA) to check out.
     required: false
     default: main
-  pr_number:
-    description: Pull request number (if applicable).
-    required: false
-    default: ""
 
 runs:
   using: composite
