@@ -45,6 +45,7 @@ runs:
         namespace: ${{ inputs.namespace }}
 
     - name: Deploy Helm Chart
+      shell: bash
       run: |
         if [ -n "${{ inputs.values_file }}" ]; then
           helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
@@ -58,4 +59,3 @@ runs:
             -f ${{ inputs.chart_path }}/values.yaml \
             --set ${{ inputs.overrides }}
         fi
-      shell: bash
