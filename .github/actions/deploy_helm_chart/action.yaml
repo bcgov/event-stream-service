@@ -58,3 +58,4 @@ runs:
             -f ${{ inputs.chart_path }}/values.yaml \
             --set ${{ inputs.overrides }}
         fi
+      shell: bash
