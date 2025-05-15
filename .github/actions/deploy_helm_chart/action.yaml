@@ -48,12 +48,14 @@ runs:
       shell: bash
       run: |
         if [ -n "${{ inputs.values_file }}" ]; then
+          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.namespace }} -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }} --set ${{ inputs.overrides }}"
           helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
             -n ${{ inputs.namespace }} \
             -f ${{ inputs.chart_path }}/values.yaml \
             -f ${{ inputs.values_file }} \
             --set ${{ inputs.overrides }}
         else
+          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.namespace }} -f ${{ inputs.chart_path }}/values.yaml --set ${{ inputs.overrides }}"
           helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
             -n ${{ inputs.namespace }} \
             -f ${{ inputs.chart_path }}/values.yaml \
