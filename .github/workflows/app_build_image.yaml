@@ -10,22 +10,25 @@ on:
       - frontend/**
       - .github/workflows/app_build_image.yaml
       - .github/workflows/app_deploy_image.yaml
-  pull_request:
-    branches:
-      - main
-    paths:
-      - Dockerfile
-      - app/**
-      - frontend/**
-      - .github/workflows/app_build_image.yaml
-      - .github/workflows/app_deploy_image.yaml
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number (if applicable)"
+        required: false
+        default: ""
+      git_ref:
+        description: "Git reference (branch or commit SHA) to deploy (ignored if pr_number is set)"
+        required: false
+        default: main
+
 jobs:
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     env:
-      GIT_REF: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || github.ref_name }}
+      GIT_REF: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.event.inputs.git_ref) || github.ref_name }}
+      PR_NUMBER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number || github.event.pull_request.number || '' }}
 
     steps:
       - name: Checkout code to get actions
@@ -40,6 +43,16 @@ jobs:
           gh_token: ${{ secrets.GITHUB_TOKEN }}
           image_name: event-stream-service-app
           git_ref: ${{ env.GIT_REF }}
-          pr_number: ${{ github.event.pull_request.number || '' }}
+          pr_number: ${{ env.PR_NUMBER }}
           context: .
           dockerfile: ./Dockerfile
+
+  deploy:
+    name: Deploy After Build (PR Only)
+    needs: build-and-push
+    if: ${{ env.PR_NUMBER != '' }}
+    uses: ./.github/workflows/app_deploy_image.yaml
+    with:
+      environment: dev
+      git_ref: ${{ env.GIT_REF }}
+      pr_number: ${{ env.PR_NUMBER }}
