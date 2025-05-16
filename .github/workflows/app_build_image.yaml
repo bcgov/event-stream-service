@@ -32,7 +32,7 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             PR_NUMBER="${{ github.event.inputs.pr_number }}"
-            GIT_REF="${{ github.event.inputs.pr_number && format('refs/pull/{0}/head', github.event.inputs.pr_number) || github.event.inputs.git_ref }}"
+            GIT_REF="${{ github.event.inputs.pr_number && format('refs/pull/{0}/merge', github.event.inputs.pr_number) || github.event.inputs.git_ref }}"
           else
             PR_NUMBER=""
             GIT_REF="${{ github.ref_name }}"

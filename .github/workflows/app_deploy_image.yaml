@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GIT_REF: ${{ inputs.pr_number && format('refs/pull/{0}/head', inputs.pr_number) || inputs.git_ref }}
+      GIT_REF: ${{ inputs.pr_number && format('refs/pull/{0}/merge', inputs.pr_number) || inputs.git_ref }}
 
     steps:
       - name: Checkout code
