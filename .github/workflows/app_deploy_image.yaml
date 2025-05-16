@@ -65,7 +65,22 @@ jobs:
             echo "RELEASE_NAME=event-stream-service-app-pr-${{ inputs.pr_number }}" >> $GITHUB_ENV
             echo "ROUTE_OVERRIDE=route.host=ess-app-pr-${{ inputs.pr_number }}.apps.silver.devops.gov.bc.ca" >> $GITHUB_ENV
           fi
-
+      
+      - name: Debug environment variables
+        shell: bash
+        env:
+          NAMESPACE: ${{ vars.NAMESPACE }}
+          OPENSHIFT_SERVER: ${{ vars.OPENSHIFT_SERVER }}
+          OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+        run: |
+          echo "NAMESPACE: $NAMESPACE"
+          echo "OPENSHIFT_SERVER: $OPENSHIFT_SERVER"
+          if [ -n "$OPENSHIFT_TOKEN" ]; then
+            echo "OPENSHIFT_TOKEN is set and length is ${#OPENSHIFT_TOKEN}"
+          else
+            echo "OPENSHIFT_TOKEN is NOT set"
+          fi
+      
       - name: Deploy Helm Chart
         uses: ./.github/actions/deploy_helm_chart
         env:
@@ -79,4 +94,4 @@ jobs:
             image.tag=${{ env.IMAGE_VERSION }}${{ env.ROUTE_OVERRIDE && format(',{0}', env.ROUTE_OVERRIDE) || '' }}
           release_name: ${{ env.RELEASE_NAME }}
           git_ref: ${{ env.GIT_REF }}
-          environment: ${{ inputs.environment }}
+          deploy_env: ${{ inputs.environment }}

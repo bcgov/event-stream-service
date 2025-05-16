@@ -18,7 +18,7 @@ inputs:
     description: Git reference (branch or commit SHA) to check out.
     required: false
     default: main
-  environment:
+  deploy_env:
     description: Deployment environment (dev, test, prod)
     required: true
 
@@ -39,7 +39,7 @@ runs:
     - name: Debug environment variables
       shell: bash
       run: |
-        echo "ENVIRONMENT: ${{ inputs.environment }}"
+        echo "ENVIRONMENT: ${{ inputs.deploy_env }}"
         echo "NAMESPACE: $NAMESPACE"
         echo "OPENSHIFT_SERVER: $OPENSHIFT_SERVER"
         if [ -n "$OPENSHIFT_TOKEN" ]; then
