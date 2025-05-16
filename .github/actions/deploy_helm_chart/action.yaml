@@ -14,50 +14,62 @@ inputs:
   release_name:
     description: Name of the Helm release.
     required: true
-  server:
-    description: OpenShift server for deployment.
-    required: true
-  token:
-    description: Openshift service account token.
-    required: true
-  namespace:
-    description: Openshift namespace to deploy to.
-    required: true
   git_ref:
     description: Git reference (branch or commit SHA) to check out.
     required: false
     default: main
+  deploy_env:
+    description: Deployment environment (dev, test, prod)
+    required: true
 
 runs:
   using: composite
   steps:
+    - name: Install OpenShift CLI tools
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        oc: "4.14"
+        helm: "3.15"
+
     - name: Checkout Code
       uses: actions/checkout@v4
       with:
         ref: ${{ inputs.git_ref }}
 
+    - name: Debug environment variables
+      shell: bash
+      run: |
+        echo "ENVIRONMENT: ${{ inputs.deploy_env }}"
+        echo "NAMESPACE: $NAMESPACE"
+        echo "OPENSHIFT_SERVER: $OPENSHIFT_SERVER"
+        if [ -n "$OPENSHIFT_TOKEN" ]; then
+          echo "OPENSHIFT_TOKEN is set and length is ${#OPENSHIFT_TOKEN}"
+        else
+          echo "OPENSHIFT_TOKEN is NOT set"
+        fi
+
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: ${{ inputs.server }}
-        openshift_token: ${{ inputs.token }}
+        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
+        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
-        namespace: ${{ inputs.namespace }}
+        namespace: ${{ env.NAMESPACE }}
 
     - name: Deploy Helm Chart
       shell: bash
       run: |
         if [ -n "${{ inputs.values_file }}" ]; then
-          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.namespace }} -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }} --set ${{ inputs.overrides }}"
+          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n $NAMESPACE -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }} --set ${{ inputs.overrides }}"
           helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
-            -n ${{ inputs.namespace }} \
+            -n $NAMESPACE \
             -f ${{ inputs.chart_path }}/values.yaml \
             -f ${{ inputs.values_file }} \
             --set ${{ inputs.overrides }}
         else
-          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.namespace }} -f ${{ inputs.chart_path }}/values.yaml --set ${{ inputs.overrides }}"
+          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n $NAMESPACE -f ${{ inputs.chart_path }}/values.yaml --set ${{ inputs.overrides }}"
           helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
-            -n ${{ inputs.namespace }} \
+            -n $NAMESPACE \
             -f ${{ inputs.chart_path }}/values.yaml \
             --set ${{ inputs.overrides }}
         fi
