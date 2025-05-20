@@ -1,0 +1,79 @@
+name: App Build Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - app/**
+      - frontend/**
+      - .github/workflows/app_build_image.yaml
+      - .github/workflows/app_deploy_image.yaml
+  
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number (if applicable)"
+        required: false
+        default: ""
+      git_ref:
+        description: "Git reference (branch or commit SHA) to build"
+        required: false
+        default: main
+
+  workflow_call:
+    inputs:
+      pr_number:
+        description: "Pull request number (if applicable)"
+        required: false
+        default: ""
+        type: string
+      git_ref:
+        description: "Git reference (branch or commit SHA) to build"
+        required: false
+        default: main
+        type: string
+
+
+jobs:
+  set-refs:
+    runs-on: ubuntu-latest
+    outputs:
+      git_ref: ${{ steps.set.outputs.git_ref }}
+      pr_number: ${{ steps.set.outputs.pr_number }}
+    steps:
+      - id: set
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            GIT_REF="${{ github.event.inputs.pr_number && format('refs/pull/{0}/merge', github.event.inputs.pr_number) || github.event.inputs.git_ref }}"
+          else
+            PR_NUMBER=""
+            GIT_REF="${{ github.ref_name }}"
+          fi
+          echo "git_ref=$GIT_REF" >> $GITHUB_OUTPUT
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: set-refs
+
+    steps:
+      - name: Checkout code to get actions
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.set-refs.outputs.git_ref }}
+
+      - name: Call Image Build and Push Composite Action
+        uses: ./.github/actions/image_build_and_push
+        with:
+          gh_username: ${{ github.repository_owner }}
+          gh_token: ${{ secrets.GITHUB_TOKEN }}
+          image_name: event-stream-service-app
+          git_ref: ${{ needs.set-refs.outputs.git_ref }}
+          pr_number: ${{ needs.set-refs.outputs.pr_number }}
+          context: .
+          dockerfile: ./Dockerfile
+
