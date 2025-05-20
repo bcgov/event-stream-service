@@ -1,6 +1,8 @@
 # Event Stream Service
 
-TODO: fill this in when we make it a BCGov repo.
+Event Stream Service (ESS) is a lightweight, scalable messaging platform built on [nats.io](https://nats.io). 
+
+ESS enables seamless decoupling of applications and services by providing a robust event notification and message bus. With ESS, different components of your system can communicate through events and messages without direct dependencies, making your architecture more flexible, maintainable, and resilient. Whether you need to publish business events or subscribe to real-time updates, ESS offers a reliable foundation for event-driven application integration.
 
 ## Directory Structure
 

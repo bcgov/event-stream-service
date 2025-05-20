@@ -11,7 +11,7 @@ image:
   # -- Default image pull policy
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
-  tag: ~
+  tag: main
 
 # -- Specify docker-registry secret names as an array
 imagePullSecrets: []
@@ -136,7 +136,7 @@ config:
   configMap:
     FRONTEND_APIPATH: "api/v1"
     FRONTEND_OIDC_AUTHORITY: ~
-    FRONTEND_OIDC_CLIENTID: ~
+    FRONTEND_OIDC_CLIENTID: "event-stream-service-6002"
 
     SERVER_APIPATH: "/api/v1"
     SERVER_BODYLIMIT: "30mb"
@@ -144,6 +144,8 @@ config:
     # SERVER_LOGFILE: 
     SERVER_PORT: "8080"
 
-    SERVER_OIDC_PUBLICKEY: ~
-    SERVER_OIDC_REALM: ~
+    SERVER_OIDC_PUBLICKEY: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmHiuPKOkpkq4GXN1ktr23rJtDl6Vdu/Y37ZAd3PnQ8/IDfAODvy1Y81aAUZicKe9egolv+OTRANN3yOg+TAbRhkeXLE5p/473EK0aQ0NazTCuWo6Am3oDQ7Yt8x0pw56/qcLtkTuXNyo5EnVV2Z2BzCnnaL31JOhyitolku0DNT6GDoRBmT4o2ItqEVHk5nM25cf1t2zbwI2790W6if1B2qVRkxxivS8tbH7nYC61Is3XCPockKptkH22cm2ZQJmtYd5sZKuXaGsvtyzHmn8/l0Kd1xnHmUu4JNuQ67YiNZGu3hOkrF0Js3BzAk1Qm4kvYRaxbJFCs/qokLZ4Z0W9wIDAQAB"
+    SERVER_OIDC_REALM: "standard"
     SERVER_OIDC_SERVERURL: ~
+
+  
