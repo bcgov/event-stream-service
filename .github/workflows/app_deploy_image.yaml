@@ -22,26 +22,17 @@ on:
         default: ""
         type: string
 
-  workflow_call:
-    inputs:
-      environment:
-        description: "Environment to deploy to (dev, test, prod)"
-        required: true
-        type: string
-      git_ref:
-        description: "Git reference (branch or commit SHA) to deploy"
-        required: false
-        default: main
-        type: string
-      pr_number:
-        description: "Pull request number (if applicable)"
-        required: false
-        default: ""
-        type: string
-
 jobs:
+  maybe-build:
+    if: ${{ inputs.pr_number != '' }}
+    uses: ./.github/workflows/app_build_image.yaml
+    with:
+      git_ref: ${{ inputs.git_ref }}
+      pr_number: ${{ inputs.pr_number }}
+
   deploy:
     name: Deploy Event Stream Service App
+    needs: [maybe-build]
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
 
@@ -66,27 +57,8 @@ jobs:
             echo "ROUTE_OVERRIDE=route.host=ess-app-pr-${{ inputs.pr_number }}.apps.silver.devops.gov.bc.ca" >> $GITHUB_ENV
           fi
       
-      - name: Debug environment variables
-        shell: bash
-        env:
-          NAMESPACE: ${{ vars.NAMESPACE }}
-          OPENSHIFT_SERVER: ${{ vars.OPENSHIFT_SERVER }}
-          OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-        run: |
-          echo "NAMESPACE: $NAMESPACE"
-          echo "OPENSHIFT_SERVER: $OPENSHIFT_SERVER"
-          if [ -n "$OPENSHIFT_TOKEN" ]; then
-            echo "OPENSHIFT_TOKEN is set and length is ${#OPENSHIFT_TOKEN}"
-          else
-            echo "OPENSHIFT_TOKEN is NOT set"
-          fi
-      
       - name: Deploy Helm Chart
         uses: ./.github/actions/deploy_helm_chart
-        env:
-          NAMESPACE: ${{ vars.NAMESPACE }}
-          OPENSHIFT_SERVER: ${{ vars.OPENSHIFT_SERVER }}
-          OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
         with:
           chart_path: ./charts/event-stream-service-app
           values_file: charts/event-stream-service-app/values-${{ inputs.environment }}.yaml
@@ -95,3 +67,6 @@ jobs:
           release_name: ${{ env.RELEASE_NAME }}
           git_ref: ${{ env.GIT_REF }}
           deploy_env: ${{ inputs.environment }}
+          openshift_server: ${{ vars.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          openshift_namespace: ${{ vars.NAMESPACE }}

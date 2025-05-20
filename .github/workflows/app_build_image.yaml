@@ -10,6 +10,7 @@ on:
       - frontend/**
       - .github/workflows/app_build_image.yaml
       - .github/workflows/app_deploy_image.yaml
+  
   workflow_dispatch:
     inputs:
       pr_number:
@@ -17,9 +18,23 @@ on:
         required: false
         default: ""
       git_ref:
-        description: "Git reference (branch or commit SHA) to deploy (ignored if pr_number is set)"
+        description: "Git reference (branch or commit SHA) to build"
         required: false
         default: main
+
+  workflow_call:
+    inputs:
+      pr_number:
+        description: "Pull request number (if applicable)"
+        required: false
+        default: ""
+        type: string
+      git_ref:
+        description: "Git reference (branch or commit SHA) to build"
+        required: false
+        default: main
+        type: string
+
 
 jobs:
   set-refs:
@@ -62,12 +77,3 @@ jobs:
           context: .
           dockerfile: ./Dockerfile
 
-  deploy:
-    name: Deploy After Build (PR Only)
-    needs: [set-refs, build-and-push]
-    if: ${{ needs.set-refs.outputs.pr_number != '' }}
-    uses: ./.github/workflows/app_deploy_image.yaml
-    with:
-      environment: dev
-      git_ref: ${{ needs.set-refs.outputs.git_ref }}
-      pr_number: ${{ needs.set-refs.outputs.pr_number }}

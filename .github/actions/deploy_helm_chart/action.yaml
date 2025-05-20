@@ -8,9 +8,11 @@ inputs:
   values_file:
     description: Path to the values file to use (optional).
     required: false
+    default: ""
   overrides:
     description: Additional Helm values to override (YAML format).
     required: false
+    default: ""
   release_name:
     description: Name of the Helm release.
     required: true
@@ -20,6 +22,15 @@ inputs:
     default: main
   deploy_env:
     description: Deployment environment (dev, test, prod)
+    required: true
+  openshift_server:
+    description: OpenShift server URL
+    required: true
+  openshift_token:
+    description: OpenShift authentication token
+    required: true
+  openshift_namespace:
+    description: OpenShift namespace to deploy to
     required: true
 
 runs:
@@ -36,40 +47,55 @@ runs:
       with:
         ref: ${{ inputs.git_ref }}
 
-    - name: Debug environment variables
-      shell: bash
-      run: |
-        echo "ENVIRONMENT: ${{ inputs.deploy_env }}"
-        echo "NAMESPACE: $NAMESPACE"
-        echo "OPENSHIFT_SERVER: $OPENSHIFT_SERVER"
-        if [ -n "$OPENSHIFT_TOKEN" ]; then
-          echo "OPENSHIFT_TOKEN is set and length is ${#OPENSHIFT_TOKEN}"
-        else
-          echo "OPENSHIFT_TOKEN is NOT set"
-        fi
-
     - name: Log in to OpenShift
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
-        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
+        openshift_server_url: ${{ inputs.openshift_server }}
+        openshift_token: ${{ inputs.openshift_token }}
         insecure_skip_tls_verify: true
-        namespace: ${{ env.NAMESPACE }}
+        namespace: ${{ inputs.openshift_namespace }}
+    
+    - name: Debug Inputs
+      shell: bash
+      run: |
+        echo "Chart Path: ${{ inputs.chart_path }}"
+        echo "Values File: ${{ inputs.values_file }}"
+        echo "Overrides: ${{ inputs.overrides }}"
+        echo "Release Name: ${{ inputs.release_name }}"
+        echo "Git Ref: ${{ inputs.git_ref }}"
+        echo "Deploy Env: ${{ inputs.deploy_env }}"
+        echo "OpenShift Server: ${{ inputs.openshift_server }}"
+        echo "OpenShift Namespace: ${{ inputs.openshift_namespace }}"
 
     - name: Deploy Helm Chart
       shell: bash
       run: |
         if [ -n "${{ inputs.values_file }}" ]; then
-          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n $NAMESPACE -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }} --set ${{ inputs.overrides }}"
-          helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
-            -n $NAMESPACE \
-            -f ${{ inputs.chart_path }}/values.yaml \
-            -f ${{ inputs.values_file }} \
-            --set ${{ inputs.overrides }}
+          if [ -n "${{ inputs.overrides }}" ]; then
+            echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.openshift_namespace }} -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }} --set ${{ inputs.overrides }}"
+            helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+              -n ${{ inputs.openshift_namespace }} \
+              -f ${{ inputs.chart_path }}/values.yaml \
+              -f ${{ inputs.values_file }} \
+              --set "${{ inputs.overrides }}"
+          else
+            echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.openshift_namespace }} -f ${{ inputs.chart_path }}/values.yaml -f ${{ inputs.values_file }}"
+            helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+              -n ${{ inputs.openshift_namespace }} \
+              -f ${{ inputs.chart_path }}/values.yaml \
+              -f ${{ inputs.values_file }}
+          fi
         else
-          echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n $NAMESPACE -f ${{ inputs.chart_path }}/values.yaml --set ${{ inputs.overrides }}"
-          helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
-            -n $NAMESPACE \
-            -f ${{ inputs.chart_path }}/values.yaml \
-            --set ${{ inputs.overrides }}
+          if [ -n "${{ inputs.overrides }}" ]; then
+            echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.openshift_namespace }} -f ${{ inputs.chart_path }}/values.yaml --set ${{ inputs.overrides }}"
+            helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+              -n ${{ inputs.openshift_namespace }} \
+              -f ${{ inputs.chart_path }}/values.yaml \
+              --set "${{ inputs.overrides }}"
+          else
+            echo "Running: helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} -n ${{ inputs.openshift_namespace }} -f ${{ inputs.chart_path }}/values.yaml"
+            helm upgrade --install ${{ inputs.release_name }} ${{ inputs.chart_path }} \
+              -n ${{ inputs.openshift_namespace }} \
+              -f ${{ inputs.chart_path }}/values.yaml
+          fi
         fi
