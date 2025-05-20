@@ -51,10 +51,12 @@ jobs:
           echo "IMAGE_VERSION=${{ inputs.git_ref }}" >> $GITHUB_ENV
           echo "RELEASE_NAME=event-stream-service-app" >> $GITHUB_ENV
           echo "ROUTE_OVERRIDE=" >> $GITHUB_ENV
+          echo "CONFIG_OVERRIDE=" >> $GITHUB_ENV
           if [[ "${{ inputs.pr_number }}" != '' ]]; then
             echo "IMAGE_VERSION=pr-${{ inputs.pr_number }}" >> $GITHUB_ENV
             echo "RELEASE_NAME=event-stream-service-app-pr-${{ inputs.pr_number }}" >> $GITHUB_ENV
-            echo "ROUTE_OVERRIDE=route.host=ess-app-pr-${{ inputs.pr_number }}.apps.silver.devops.gov.bc.ca" >> $GITHUB_ENV
+            echo "ROUTE_OVERRIDE=,route.host=ess-app-pr-${{ inputs.pr_number }}.apps.silver.devops.gov.bc.ca" >> $GITHUB_ENV
+            echo "CONFIG_OVERRIDE=,config.enabled=false" >> $GITHUB_ENV
           fi
       
       - name: Deploy Helm Chart
@@ -63,7 +65,7 @@ jobs:
           chart_path: ./charts/event-stream-service-app
           values_file: charts/event-stream-service-app/values-${{ inputs.environment }}.yaml
           overrides: |
-            image.tag=${{ env.IMAGE_VERSION }}${{ env.ROUTE_OVERRIDE && format(',{0}', env.ROUTE_OVERRIDE) || '' }}
+            image.tag=${{ env.IMAGE_VERSION }}${{ env.ROUTE_OVERRIDE }}${{ env.CONFIG_OVERRIDE }}
           release_name: ${{ env.RELEASE_NAME }}
           git_ref: ${{ env.GIT_REF }}
           deploy_env: ${{ inputs.environment }}
