@@ -1,11 +1,11 @@
 ARG VARIANT="20.18.3-bookworm"
 
 #
-# need the nats tk tool
+# Build the nats nk tool
+# For devcontainers, we build natively (no cross-compilation needed)
 #
-FROM golang:alpine as nk_tool
+FROM golang:alpine AS nk_tool
 
-# need to install nats nk tool
 RUN apk update && apk upgrade -a \
     && go install github.com/nats-io/nkeys/nk@latest
 
@@ -20,7 +20,8 @@ RUN apt-get update && \
         vim \
         xauth \
         xvfb \
-    && apt-get clean
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install nk tool binary
 COPY --from=nk_tool /go/bin /usr/local/bin
