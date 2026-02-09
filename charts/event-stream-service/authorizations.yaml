@@ -140,3 +140,30 @@ nats:
                   "$JS.ACK.CHEFS.>",
                 ]
               subscribe: ["PUBLIC.forms.>", "PRIVATE.forms.>", "_INBOX.>"]
+          # Request for account: 
+          # Confirmation id: D3C6B4F1
+          # Submitted by: TSCHARIE@idir
+          # Ministry: Citizens Service
+          - nkey: "UAWQEZ5GQAKF56UZSYLRSBAH543LOWNO5SGXEPHS25CGGTTAWOY5AFNS" # CHEFS read-only, CITZ.
+            permissions:
+              publish:
+                [
+                  "SANDBOX.*",
+                  "$JS.API.INFO",
+                  "$JS.API.CONSUMER.CREATE.CHEFS",
+                  "$JS.API.CONSUMER.CREATE.CHEFS.>",
+                  "$JS.API.CONSUMER.DURABLE.CREATE.CHEFS.>",
+                  "$JS.API.CONSUMER.DELETE.CHEFS.>",
+                  "$JS.API.CONSUMER.INFO.CHEFS.>",
+                  "$JS.API.CONSUMER.LIST.CHEFS",
+                  "$JS.API.CONSUMER.NAMES.CHEFS",
+                  "$JS.API.CONSUMER.MSG.NEXT.CHEFS.>",
+                  "$JS.API.CONSUMER.MSG.NEXT.CHEFS.NEW",
+                  "$JS.API.STREAM.MSG.GET.CHEFS",
+                  "$JS.API.STREAM.INFO.CHEFS",
+                  "$JS.API.STREAM.LIST",
+                  "$JS.API.STREAM.NAMES",
+                  "$JS.ACK.CHEFS",
+                  "$JS.ACK.CHEFS.>",
+                ]
+              subscribe: ["PUBLIC.forms.>", "PRIVATE.forms.>", "_INBOX.>"]
