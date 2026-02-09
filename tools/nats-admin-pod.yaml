@@ -1,0 +1,80 @@
+# NATS Admin Pod and NetworkPolicy for OpenShift
+# See README-nats-admin.md for full usage instructions
+---
+# NetworkPolicy to allow admin pod to reach NATS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-to-nats
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: nats
+      app.kubernetes.io/instance: event-stream-service
+      app.kubernetes.io/name: nats
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: nats-admin
+      ports:
+        - protocol: TCP
+          port: 4222
+---
+# Admin Pod with NATS CLI tools
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nats-admin
+  labels:
+    app: nats-admin
+spec:
+  containers:
+    - name: nats-box
+      image: natsio/nats-box:0.14.3
+      command:
+        - "tail"
+        - "-f"
+        - "/dev/null"
+      env:
+        # Set HOME to writable directory (fixes schema cache permission issues)
+        - name: HOME
+          value: "/tmp"
+        # NATS server URL - connects to the ess-nats service
+        - name: NATS_URL
+          value: "nats://ess-nats:4222"
+        # Sysadmin password from secret (for $SYS account - server monitoring only)
+        - name: SYSADMIN_PWD
+          valueFrom:
+            secretKeyRef:
+              name: ess-nats-auth
+              key: sysadmin_pwd
+        # Admin password from secret (full JetStream access)
+        - name: ADMIN_PWD
+          valueFrom:
+            secretKeyRef:
+              name: ess-nats-auth
+              key: admin_pwd
+        # CHEFS password from secret
+        - name: CHEFS_PWD
+          valueFrom:
+            secretKeyRef:
+              name: ess-nats-auth
+              key: chefs_pwd
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 10m
+          memory: 32Mi
+      # OpenShift-compatible security context
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: true
+  restartPolicy: Never
