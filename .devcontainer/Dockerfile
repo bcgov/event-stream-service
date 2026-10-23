@@ -1,4 +1,4 @@
-ARG VARIANT="20.18.3-bookworm"
+ARG VARIANT="24.22.1-bookworm"
 
 #
 # Build the nats nk tool
